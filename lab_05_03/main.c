@@ -53,7 +53,7 @@ int main(int argc, char **argv)
     {
         FILE *sort_f;
 
-        sort_f = fopen(argv[2], "r+b");
+        sort_f = fopen(argv[2], "rb+");
 
         int result = sort_binary_file(sort_f);
 
