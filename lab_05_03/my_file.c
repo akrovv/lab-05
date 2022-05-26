@@ -1,19 +1,24 @@
 #include "my_file.h"
 
-#define N 50
 #define N_MAX 1000
 
-int create_binary_file(FILE *f)
+int create_binary_file(FILE *f, char digits[])
 {
 	if (f == NULL)
 		return FILE_OPEN_ERROR;
 
-	int n = rand() % N;
+	if (!atoi(digits))
+		return INCORRECT_DIGIT_ERROR;
 
-	for (int i = 0; i < n; i++)
+	int digit = atoi(digits);
+
+	srand(time(NULL));
+
+	for (int i = 0; i < digit; i++)
 	{
 		int rc = rand() % N_MAX;
-		fwrite(&rc, sizeof(int), 1, f);
+		if (fwrite(&rc, sizeof(int), 1, f) != 1)
+			return FILE_WRITE_ERROR;
 	}
 
 	return EXIT_SUCCESS;
@@ -26,7 +31,7 @@ int file_size(FILE *f, int *size)
 
 	int rc = ftell(f);
 
-	if (rc <= 0)
+	if (rc <= 0 || rc % (long) sizeof(int) != 0)
 		return EXIT_FAILURE;
 
 	*size = rc;
@@ -85,6 +90,7 @@ int sort_binary_file(FILE *f)
 	int size;
 	if (file_size(f, &size))
 		return SIZE_FILE_ERROR;
+
 	int len = size / (int) sizeof(int);
 
 	for (int i = 0; i < len; i++)
